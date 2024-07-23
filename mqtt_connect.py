@@ -26,7 +26,7 @@ def connect_to_broker():
     if not client.is_connected():
         client.username_pw_set(username, password)
         client.on_connect = on_connect
-        client.connect(broker_address, port) 
+        client.connect(broker_address, port)
     
 def disconnect_from_broker(payload): 
     if client.is_connected():
