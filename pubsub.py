@@ -27,14 +27,14 @@ GPIO.setup(door_sensor_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 # Callback function to handle motion detection event
 def motion_detected_callback(channel):
     global motion_detected
-    if pir_value and device_status and account_status:
+    if pir_value and device_status and account_status and client.is_connected:
         push_PIR_reading()  # Motion detected, send sensor reading
         motion_detected = True
 
 # Callback function to handle door sensor event
 def door_sensor_callback(channel):
     global door_detected
-    if door_value and device_status and account_status:
+    if door_value and device_status and account_status and client.is_connected:
         push_Door_reading()
         door_detected = True
 
@@ -71,6 +71,7 @@ device_id = None
 
 # subscriber topics to get the device settings from retain message
 sub_setting_Topic = "device/" + sr.get_raspberry_pi_serial()
+sub_removedevice_Topic = "device/remove/" + sr.get_raspberry_pi_serial()
 # end subscriber topics
 
 #publishers topics
@@ -128,6 +129,14 @@ def on_message(client, userdata, msg):
     global last_retain_message
 
     payload_dict = None
+    if (device_id is not None and account_id is not None) and IsHeartBeatPublished == False:
+            print(f"device id : {device_id} | account id : {account_id}")
+            connectedPublishMsg()
+
+    if msg.topic == sub_removedevice_Topic and msg.payload is not None:
+        removePayload = msg.payload.decode()
+        if removePayload == "1":
+            disconnect_from_broker(diconnectPublishMsg())
 
     if msg.topic == sub_setting_Topic and msg.payload is not None:
         last_retain_message = msg.payload  # Update last_retain_message
@@ -167,12 +176,7 @@ def on_message(client, userdata, msg):
             pir_value = bool(payload_dict.get('PIR', pir_value))
             account_id = payload_dict.get('AccountId', account_id)
             device_id =  payload_dict.get('Id', device_id)
-        
-        #print(f"device_id: {device_id}, account_id: {account_id}, isHearthBeatOublish : {str(IsHeartBeatPublished)}")
-
-        if (device_id is not None and account_id is not None) and IsHeartBeatPublished == False:
-            #print(f"device id : {device_id} | account id : {account_id}")
-            connectedPublishMsg()
+         
          
     # if msg.topic == sub_setting_Topic and msg.payload is not None:   
     #     if msg.payload != last_retain_message:            
@@ -226,11 +230,15 @@ if __name__ == "__main__":
     try: 
         connect_to_broker()
         client.loop_start()  
+        
         print("1")
         connectedPublishMsg() 
         print("2")
+
         client.subscribe(sub_setting_Topic)
-        client.on_message = on_message
+        client.subscribe(sub_removedevice_Topic)
+        client.on_message = on_message 
+
         GPIO.add_event_detect(door_sensor_pin, GPIO.BOTH, callback=door_sensor_callback)
         GPIO.add_event_detect(motion_sensor_pin, GPIO.RISING, callback=motion_detected_callback)
    
@@ -240,7 +248,7 @@ if __name__ == "__main__":
         while True:
             if client.is_connected():
                 if motion_detected:
-                    push_PIR_reading  #Publish motion detection event 
+                    push_PIR_reading  #Publish motion detection event
 
                 if payload_data is not None:
                     if device_status and account_status:
