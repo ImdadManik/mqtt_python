@@ -27,14 +27,14 @@ GPIO.setup(door_sensor_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 # Callback function to handle motion detection event
 def motion_detected_callback(channel):
     global motion_detected
-    if pir_value and device_status and account_status and client.is_connected:
+    if pir_value and device_status and account_status and client.is_connected():
         push_PIR_reading()  # Motion detected, send sensor reading
         motion_detected = True
 
 # Callback function to handle door sensor event
 def door_sensor_callback(channel):
     global door_detected
-    if door_value and device_status and account_status and client.is_connected:
+    if door_value and device_status and account_status and client.is_connected():
         push_Door_reading()
         door_detected = True
 
@@ -113,7 +113,6 @@ def connectedPublishMsg():
 
 # Message receiving callback
 def on_message(client, userdata, msg):
-    print("3")
     global payload_data
     global temp_value
     global temp_alert_freq
@@ -129,6 +128,7 @@ def on_message(client, userdata, msg):
     global last_retain_message
 
     payload_dict = None
+
     if (device_id is not None and account_id is not None) and IsHeartBeatPublished == False:
             print(f"device id : {device_id} | account id : {account_id}")
             connectedPublishMsg()
@@ -231,9 +231,7 @@ if __name__ == "__main__":
         connect_to_broker()
         client.loop_start()  
         
-        print("1")
-        connectedPublishMsg() 
-        print("2")
+        connectedPublishMsg()
 
         client.subscribe(sub_setting_Topic)
         client.subscribe(sub_removedevice_Topic)
