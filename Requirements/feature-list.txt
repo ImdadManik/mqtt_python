@@ -4,17 +4,16 @@ IoT - Client - Publisher
 
 Authentication: S/N => Username, Password = Encrypted S/N
 HeartBeat
-Sending Event Based Data (Pending config file handling from portal settings)
-Publish sensor data by topics (DB updates required as per discussion: 24-4-24)
+Sending Event Based Data 
+Publish sensor data by topics 
 Retained message to remove, send data directly on live (db)
-Sending Time Based Data (Pending config file handling from portal settings)
+Sending Time Based Data 
 IoT - Client - Subscriber
 
 Authentication: S/N => Username, Password = Encrypted S/N
 Save MQTT Messages into Database
 IoT - Control Panel - Admin
 
-Tenant Management: Limit number of Devices (Done)
 Tenant Management: Enable / Disable - Update all related device Broker
 Tenant Management: Create / Enable / Disable - (Toggle) - Update Broker - Create User in Broker
 Tenant Management: HeartBeat of the Device - Online / Offline
@@ -30,14 +29,9 @@ Tenant Management: Humidity Alert Frequency (in Minutes)
 Tenant Management: Alert Humidity less than > XX (default 20) - Update Broker
 Tenant Management: LDR - Light Detection Enable / Disable - Update Broker
 Tenant Management: Light Alert Frequency (in Minutes)
-Tenant Management: Alert DayTime Lumin More Than > XX (default XX) - Update Broker
-Tenant Management: Alert NightTime Lumin More Than > XX (default XX) - Update Broker
 Tenant Management: Device current setting needs to be checked between pub and sub before sending data to db
-Tenant Management: Logs of each Sensor for last 30 days (Timestamp, Sensor Type, Description - Value/Offline/Online)
-Tenant Management: Users can export Logs
-IoT - Control Panel - Tenant (Hotel)
-
-Publisher: Publish Misc Messages to Client (controllers)
+ 
+ 
 Device Management: Enable / Disable - Update all related device Broker
 Device Management: Create / Enable / Disable - (Toggle) - Update Broker - Create User in Broker
 Device Management: HeartBeat of the Device - Online / Offline
